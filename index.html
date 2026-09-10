@@ -1,57 +1,643 @@
+<!--
+  Kamus Pegon App — Alih Tulis Latin ke Aksara Pegon
+  Copyright (c) 2026 Ahmad Sadam. Seluruh hak dilindungi.
+  Versi Android (Capacitor) .
+-->
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kebijakan Privasi - Kamus Pegon</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#F1E6CC">
+<meta name="description" content="Kamus Pegon: alih tulis Latin ke Aksara Pegon. Cepat, akurat, offline history.">
+<title>Kamus Pegon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
 <style>
-body{font-family:system-ui,sans-serif;max-width:640px;margin:40px auto;padding:0 20px;line-height:1.7;color:#221F2B;background:#F1E6CC;}
-h1{font-size:1.5rem;} h2{font-size:1.1rem;margin-top:28px;}
-a{color:#8A3B32;}
+:root{--paper:#241A10;--paper-deep:#FFFFFF;--ink:#241A10;--ink-soft:#6B5636;--ink-page:#F3E7C9;--ink-page-soft:#C9A24B;--line-page:rgba(243,231,201,.2);--rubric:#B08D3E;--rubric-deep:#7A611F;--rubric-light:#E4C575;--brass:#9C7A2E;--sage:#6B7754;--line:rgba(43,31,20,.14);--btn-face-top:rgba(255,255,255,.4);--btn-face-shadow:rgba(43,31,20,.22);--radius:14px;--radius-btn:20px;--safe-top:env(safe-area-inset-top);--safe-bottom:env(safe-area-inset-bottom);--font-scale:1;--ease:cubic-bezier(.22,1,.36,1);--ad-space:0px;}
+[data-theme="dark"]{--paper:#140E09;--paper-deep:#241A10;--ink:#F0E4C8;--ink-soft:#C9A24B;--ink-page:#F0E4C8;--ink-page-soft:#C9A24B;--line-page:rgba(240,228,200,.12);--rubric:#D9B65E;--rubric-deep:#8A6B27;--rubric-light:#EFCE7E;--brass:#D9B65E;--sage:#9C8B5A;--line:rgba(240,228,200,.1);--btn-face-top:rgba(255,255,255,.12);--btn-face-shadow:rgba(0,0,0,.5);}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;overscroll-behavior-y:contain;font-size:calc(16px * var(--font-scale));}
+body{overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;margin:0;background:
+    radial-gradient(ellipse 90% 50% at 50% -10%,rgba(201,162,75,.16),transparent),
+    radial-gradient(ellipse 70% 40% at 100% 100%,rgba(107,119,84,.1),transparent),
+    var(--paper);
+  background-attachment:fixed;color:var(--ink);font-family:'Source Serif 4',Georgia,serif;-webkit-font-smoothing:antialiased;-webkit-user-select:none;user-select:none;padding-top:var(--safe-top);padding-bottom:calc(var(--safe-bottom) + 8px + var(--ad-space));transition:background .35s var(--ease),color .35s var(--ease),padding-bottom .25s var(--ease);}
+textarea,input,button,.selectable{-webkit-user-select:text;user-select:text;}
+.wrap{max-width:720px;margin:0 auto;padding:0 16px;}
+a{color:inherit;}
+header{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--paper) 94%,transparent);border-bottom:1px solid var(--line-page);padding-top:var(--safe-top);}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:12px 0;}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(155deg,var(--rubric-light),var(--rubric) 65%,var(--rubric-deep));display:flex;align-items:center;justify-content:center;color:var(--paper);font-family:'Amiri',serif;font-weight:700;font-size:1.15rem;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 4px 10px rgba(122,97,31,.35);}
+.brand-name{font-family:'Fraunces',serif;font-weight:600;font-size:1.08rem;color:var(--ink-page);}
+.brand-name em{font-style:italic;color:var(--rubric);font-weight:500;}
+.header-actions{display:flex;gap:4px;align-items:center;}
+.icon-btn{width:42px;height:42px;border:none;background:transparent;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink-page-soft);transition:background .2s var(--ease),transform .15s var(--ease);touch-action:manipulation;}
+.icon-btn:active{background:var(--line);transform:scale(.9);}
+.icon-btn svg{width:22px;height:22px;}
+main{padding-bottom:24px;}
+.hero{padding:26px 0 10px;text-align:center;position:relative;}
+.hero h1{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:600;margin:0 0 6px;letter-spacing:-.02em;color:var(--ink-page);background:linear-gradient(100deg,var(--ink-page) 30%,var(--rubric-light) 50%,var(--ink-page) 70%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:sheen 5s ease-in-out infinite;}
+@keyframes sheen{0%,100%{background-position:0% center;}50%{background-position:100% center;}}
+.hero h1{animation-iteration-count:2;}
+@media (prefers-reduced-motion:reduce){.hero h1{animation:none;}}
+.hero p{margin:0;font-size:.88rem;color:var(--ink-page-soft);line-height:1.45;}
+.tool{padding:8px 0 4px;}
+.panels{display:flex;flex-direction:column;gap:14px;}
+.panel{background:var(--paper-deep);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.04),0 10px 28px -14px rgba(36,26,16,.35);transition:box-shadow .3s var(--ease),transform .3s var(--ease);contain:content;}
+.panel:focus-within{box-shadow:0 1px 2px rgba(0,0,0,.04),0 14px 32px -12px rgba(176,141,62,.35),0 0 0 2px var(--rubric-light);}
+.panel-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--line);}
+.panel-head h3{margin:0;font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-soft);font-weight:600;}
+.btn-sm{border:none;background:transparent;color:var(--rubric);font-size:.78rem;font-weight:600;cursor:pointer;padding:4px 8px;border-radius:4px;font-family:inherit;}
+.btn-sm:active{opacity:.7;}
+textarea{width:100%;border:none;background:transparent;padding:14px;font-family:inherit;font-size:1.05rem;line-height:1.55;color:var(--ink);resize:none;outline:none;min-height:82px;}
+#outputPegon{font-family:'Amiri',serif;font-size:1.35rem;line-height:1.7;direction:rtl;text-align:right;}
+.char-count{font-size:.66rem;color:var(--ink-soft);white-space:nowrap;flex:0 0 auto;padding-bottom:1px;}
+.input-tip{font-size:.66rem;color:var(--ink-soft);line-height:1.25;opacity:.8;flex:1;min-width:0;}
+.input-meta{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;padding:0 14px 8px;}
+.actions{display:flex;justify-content:center;gap:10px;padding:8px 0 12px;}
+.btn-primary{flex:0 1 auto;min-width:180px;background:linear-gradient(180deg,var(--rubric-light),var(--rubric));color:var(--paper);border:none;border-radius:var(--radius-btn);padding:14px 40px;font-family:'Fraunces',serif;font-size:1.05rem;font-weight:600;cursor:pointer;letter-spacing:.02em;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 7px 0 var(--rubric-deep),0 14px 26px -8px rgba(122,97,31,.55);transform:translateY(0);transition:transform .18s var(--ease),box-shadow .18s var(--ease);touch-action:manipulation;will-change:transform;}
+.btn-primary:active{transform:translateY(7px);box-shadow:inset 0 3px 6px rgba(0,0,0,.4),0 0 0 var(--rubric-deep),0 0 0 rgba(0,0,0,.3);}
+.btn-primary:disabled{opacity:.55;cursor:not-allowed;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 7px 0 var(--rubric-deep),0 10px 18px rgba(0,0,0,.3);transform:translateY(0);}
+.ad-banner{width:100%;min-height:50px;display:flex;align-items:center;justify-content:center;background:var(--paper-deep);border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:6px 0 10px;overflow:hidden;}
+.ad-banner .placeholder{font-size:.62rem;color:var(--ink-soft);letter-spacing:.1em;text-transform:uppercase;opacity:.45;}
+.feat-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:4px 0 16px;}
+.feat-row.feat-row-4{grid-template-columns:repeat(4,1fr);}
+.feat-btn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 4px;background:linear-gradient(180deg,var(--rubric-light),var(--rubric));border:none;border-radius:16px;cursor:pointer;font-size:.66rem;color:var(--paper);font-weight:700;font-family:inherit;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 5px 0 var(--rubric-deep),0 12px 20px -10px rgba(122,97,31,.5);transform:translateY(0);transition:transform .18s var(--ease),box-shadow .18s var(--ease),color .2s var(--ease);touch-action:manipulation;}
+.feat-btn:active{transform:translateY(5px);box-shadow:inset 0 2px 5px rgba(0,0,0,.35),0 0 0 var(--rubric-deep);}
+.feat-btn svg{width:20px;height:20px;stroke:var(--paper);transition:stroke .2s var(--ease);}
+.feat-btn.active{background:linear-gradient(180deg,var(--rubric-deep),var(--paper));color:var(--rubric-light);}
+.feat-btn.active svg{stroke:var(--rubric-light);}
+.section{display:grid;grid-template-rows:0fr;opacity:0;pointer-events:none;transition:grid-template-rows .38s var(--ease),opacity .28s var(--ease);}
+.section.open{grid-template-rows:1fr;opacity:1;pointer-events:auto;}
+.section>.section-inner{overflow:hidden;padding:0 0 20px;min-height:0;}
+.section h3{font-size:.7rem;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-soft);margin:0 0 10px;display:flex;align-items:center;justify-content:space-between;}
+.hist-item,.fav-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px;background:var(--paper-deep);border-radius:var(--radius);margin-bottom:8px;border:1px solid var(--line);cursor:pointer;box-shadow:0 6px 16px -10px rgba(0,0,0,.25);transition:transform .18s var(--ease),box-shadow .18s var(--ease),opacity .18s var(--ease);touch-action:manipulation;content-visibility:auto;contain-intrinsic-size:auto 52px;}
+.hist-item:active,.fav-item:active{opacity:.85;transform:scale(.98);}
+.hist-latin,.fav-latin{font-size:.88rem;color:var(--ink);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.hist-pegon,.fav-pegon{font-family:'Amiri',serif;font-size:1.1rem;direction:rtl;color:var(--rubric);max-width:38%;overflow:hidden;text-overflow:ellipsis;}
+.item-del{border:none;background:transparent;color:var(--ink-soft);font-size:1.1rem;padding:4px 8px;cursor:pointer;opacity:.6;}
+.item-del:active{opacity:1;color:var(--rubric);}
+.hist-empty{text-align:center;color:var(--ink-soft);font-size:.85rem;padding:24px;font-style:italic;}
+footer{padding:24px 0 36px;text-align:center;border-top:1px solid var(--line-page);}
+footer p{font-size:.7rem;color:var(--ink-page-soft);margin:4px 0;letter-spacing:.06em;}
+.footer-links{display:flex;justify-content:center;gap:18px;margin:12px 0;}
+.footer-links a{font-size:.72rem;color:var(--ink-page-soft);text-decoration:none;border-bottom:1px solid var(--line-page);}
+.toast{position:fixed;bottom:calc(70px + var(--safe-bottom) + var(--ad-space));left:50%;transform:translateX(-50%) translateY(16px);background:var(--paper-deep);color:var(--ink);padding:11px 22px;border-radius:100px;font-size:.82rem;opacity:0;transition:all .3s var(--ease);z-index:1000;pointer-events:none;max-width:90%;text-align:center;box-shadow:0 10px 30px -6px rgba(0,0,0,.4);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.modal-overlay{position:fixed;inset:0;background:rgba(20,14,9,.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);z-index:90;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .28s var(--ease);}
+.modal-overlay.open{display:flex;opacity:1;pointer-events:auto;}
+.modal{background:var(--paper);width:100%;max-width:520px;border-radius:22px 22px 0 0;padding:24px 20px calc(28px + var(--safe-bottom) + var(--ad-space));max-height:82vh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;position:relative;box-shadow:0 -20px 50px -12px rgba(0,0,0,.5);transform:translateY(28px);opacity:0;transition:transform .3s var(--ease),opacity .3s var(--ease),padding-bottom .25s var(--ease);will-change:transform,opacity;}
+.modal-overlay.open .modal{transform:translateY(0);opacity:1;}
+.modal-close{position:absolute;top:12px;right:14px;width:36px;height:36px;border:none;background:var(--paper-deep);border-radius:50%;font-size:1.3rem;cursor:pointer;color:var(--ink-soft);line-height:1;}
+.modal h3{margin:0 0 12px;font-family:'Fraunces',serif;font-size:1.2rem;color:var(--ink-page);}
+.modal p{margin:0;line-height:1.65;color:var(--ink-page-soft);font-size:.92rem;}
+.settings-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--line-page);}
+.settings-row:last-child{border-bottom:none;}
+.settings-row label{font-size:.95rem;color:var(--ink-page);}
+.settings-row .opts{display:flex;gap:6px;}
+.settings-row .opt{padding:6px 12px;border:1px solid var(--line);border-radius:6px;background:var(--paper-deep);font-size:.8rem;cursor:pointer;font-family:inherit;color:var(--ink-soft);}
+.settings-row .opt.on{background:var(--rubric);color:var(--paper);border-color:var(--rubric);}
+.online-dot{width:8px;height:8px;border-radius:50%;background:#4caf50;display:inline-block;margin-right:6px;}
+.online-dot.off{background:#e57373;}
+#streakBadge{display:inline-block;margin-left:6px;font-size:.78rem;color:var(--ink-page-soft);font-weight:600;}
+.hist-search{width:100%;border:1px solid var(--line);background:var(--paper-deep);border-radius:var(--radius);padding:10px 12px;font-family:inherit;font-size:.85rem;color:var(--ink);margin-bottom:10px;outline:none;}
+.onboard-feat{display:flex;gap:12px;align-items:flex-start;padding:10px 0;}
+.onboard-feat .ico{font-size:1.3rem;line-height:1;}
+.onboard-feat b{display:block;font-size:.92rem;margin-bottom:2px;color:var(--ink-page);}
+.onboard-feat span{font-size:.82rem;color:var(--ink-page-soft);}
+.btn-block{display:block;width:100%;text-align:center;background:linear-gradient(180deg,var(--rubric-light),var(--rubric));color:var(--paper);border:none;border-radius:var(--radius-btn);padding:13px;font-family:'Fraunces',serif;font-weight:600;font-size:1rem;cursor:pointer;margin-top:16px;text-decoration:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 7px 0 var(--rubric-deep),0 10px 18px rgba(0,0,0,.3);transform:translateY(0);transition:transform .07s cubic-bezier(.3,0,.5,1),box-shadow .07s cubic-bezier(.3,0,.5,1);}
+.btn-block:active{transform:translateY(7px);box-shadow:inset 0 3px 6px rgba(0,0,0,.4),0 0 0 var(--rubric-deep),0 0 0 rgba(0,0,0,.3);}
+.settings-row a.opt{text-decoration:none;display:inline-block;}
+.settings-row.bg-row{flex-direction:column;align-items:stretch;gap:10px;}
+.bg-swatches{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.bg-swatch{width:30px;height:30px;border-radius:50%;border:2px solid var(--line);cursor:pointer;padding:0;flex:0 0 auto;box-shadow:inset 0 0 0 1px rgba(255,255,255,.15);transition:transform .15s var(--ease),border-color .15s var(--ease);}
+.bg-swatch:active{transform:scale(.9);}
+.bg-swatch.on{border-color:var(--rubric);box-shadow:0 0 0 2px var(--paper-deep),0 0 0 4px var(--rubric);}
+.bg-swatch-custom{position:relative;overflow:hidden;background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red);display:flex;align-items:center;justify-content:center;}
+.bg-swatch-custom input[type="color"]{position:absolute;inset:-4px;width:calc(100% + 8px);height:calc(100% + 8px);border:none;padding:0;cursor:pointer;opacity:0;}
+.bg-reset-btn{align-self:flex-start;}
+.mode-trigger{display:flex;align-items:center;gap:9px;width:100%;padding:7px 12px 7px 8px;margin:4px 0 10px;border:none;border-radius:var(--radius-btn);background:linear-gradient(180deg,var(--rubric-light),var(--rubric));cursor:pointer;font-family:inherit;text-align:left;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 4px 0 var(--rubric-deep),0 10px 18px -12px rgba(122,97,31,.55);transform:translateY(0);transition:transform .16s var(--ease),box-shadow .16s var(--ease);touch-action:manipulation;will-change:transform;}
+.mode-trigger:active{transform:translateY(4px);box-shadow:inset 0 2px 6px rgba(0,0,0,.35),0 0 0 var(--rubric-deep);}
+.mode-trigger-icon{font-size:.9rem;flex:0 0 auto;width:28px;height:28px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:linear-gradient(155deg,var(--paper) 0%,color-mix(in srgb,var(--paper) 75%,var(--rubric-deep) 25%) 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 3px 8px rgba(0,0,0,.3);transition:transform .16s var(--ease);}
+.mode-trigger:active .mode-trigger-icon{transform:scale(.92);}
+.mode-trigger-text{flex:1;display:flex;flex-direction:column;gap:1px;min-width:0;}
+.mode-trigger-text small{font-size:.6rem;text-transform:uppercase;letter-spacing:.08em;color:color-mix(in srgb,var(--paper) 65%,var(--rubric-deep) 35%);}
+.mode-trigger-text strong{font-size:.82rem;color:var(--paper);font-weight:700;font-family:'Fraunces',serif;}
+.mode-trigger-chev{color:var(--paper);font-size:.95rem;flex:0 0 auto;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.16);transition:transform .18s var(--ease),background .18s var(--ease);}
+.mode-trigger:active .mode-trigger-chev{transform:translateX(2px);background:rgba(0,0,0,.26);}
+.mode-picker{display:flex;flex-direction:column;gap:8px;}
+.mode-pick-opt{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--paper);font-family:inherit;cursor:pointer;transition:border-color .15s var(--ease),background .15s var(--ease);}
+.mode-pick-opt .mpo-main{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.mode-pick-opt .mpo-main strong{font-size:.92rem;color:var(--ink-page);font-family:'Fraunces',serif;font-weight:600;}
+.mode-pick-opt .mpo-main small{font-size:.76rem;color:var(--ink-page-soft);line-height:1.35;}
+.mode-pick-opt .mpo-check{flex:0 0 auto;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:.72rem;color:transparent;transition:all .15s var(--ease);}
+.mode-pick-opt.on{border-color:var(--rubric);background:color-mix(in srgb,var(--rubric-light) 14%,var(--paper));}
+.mode-pick-opt.on .mpo-check{background:var(--rubric);border-color:var(--rubric);color:#fff;}
+
+/* ===== Latihan Menulis (quiz overlay) ===== */
+.quiz-overlay{position:fixed;inset:0;z-index:95;background:var(--paper);display:flex;flex-direction:column;padding-top:var(--safe-top);padding-bottom:var(--safe-bottom);opacity:0;pointer-events:none;transform:translateY(18px);transition:opacity .3s var(--ease),transform .3s var(--ease);will-change:transform,opacity;}
+.quiz-overlay.open{opacity:1;pointer-events:auto;transform:translateY(0);}
+.quiz-head{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line-page);flex-shrink:0;}
+.quiz-head h2{margin:0;font-family:'Fraunces',serif;font-size:1.05rem;color:var(--ink-page);flex:1;}
+.quiz-back{width:38px;height:38px;border:none;background:var(--paper-deep);border-radius:50%;color:var(--ink-page-soft);font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.quiz-body{flex:1;overflow-y:auto;padding:16px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+.stage-card{display:flex;align-items:center;gap:12px;padding:16px;background:var(--paper-deep);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:12px;cursor:pointer;box-shadow:0 8px 20px -12px rgba(0,0,0,.3);}
+.stage-card.locked{opacity:.5;cursor:not-allowed;}
+.stage-num{width:40px;height:40px;border-radius:50%;background:linear-gradient(180deg,var(--rubric-light),var(--rubric));color:var(--paper);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:700;flex-shrink:0;}
+.stage-card.locked .stage-num{background:var(--line);color:var(--ink-soft);}
+.stage-info{flex:1;min-width:0;}
+.stage-info b{display:block;font-size:.95rem;color:var(--ink-page);}
+.stage-info span{font-size:.78rem;color:var(--ink-page-soft);}
+.stage-star{font-size:1.1rem;color:var(--rubric);flex-shrink:0;}
+.quiz-progress{height:6px;border-radius:4px;background:var(--line);overflow:hidden;margin-bottom:18px;}
+.quiz-progress-bar{height:100%;background:linear-gradient(90deg,var(--rubric-light),var(--rubric));transition:width .3s var(--ease);}
+.quiz-prompt{text-align:center;margin:18px 0 22px;}
+.quiz-prompt-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-soft);margin-bottom:8px;}
+.quiz-prompt-word{font-family:'Fraunces',serif;font-size:1.4rem;color:var(--ink-page);font-weight:600;}
+.quiz-answer-wrap{margin-bottom:16px;}
+.quiz-answer-input{width:100%;min-height:52px;max-height:110px;box-sizing:border-box;direction:rtl;text-align:right;padding:10px 14px;border:1.5px solid var(--line);border-radius:14px;background:var(--paper-deep);color:var(--ink);font-family:'Amiri',serif;font-size:1.3rem;line-height:1.6;resize:none;outline:none;caret-color:var(--rubric);overflow-y:auto;box-shadow:inset 0 1px 3px rgba(43,31,20,.06);transition:border-color .15s,box-shadow .15s;}
+.quiz-answer-input:focus{border-color:var(--rubric);box-shadow:0 0 0 3px rgba(122,97,31,.14);}
+.quiz-answer-input::placeholder{font-family:inherit;font-size:.92rem;color:var(--ink-soft);}
+.quiz-bank{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;direction:rtl;margin-bottom:20px;}
+.quiz-tile-btn{min-width:44px;height:48px;padding:0 10px;border-radius:12px;background:var(--paper-deep);border:1px solid var(--line);font-family:'Amiri',serif;font-size:1.3rem;color:var(--ink);cursor:pointer;box-shadow:inset 0 1px 0 var(--btn-face-top),0 4px 0 var(--btn-face-shadow);transition:transform .12s var(--ease),opacity .12s var(--ease);touch-action:manipulation;}
+.quiz-tile-btn:active{transform:translateY(4px);box-shadow:none;}
+.quiz-tile-btn.used{opacity:0;pointer-events:none;}
+.pegon-kb{margin-bottom:16px;}
+.pk-rows{--pk-cols:11;display:flex;flex-direction:column;gap:6px;direction:rtl;margin-bottom:6px;}
+.pk-row{display:flex;gap:5px;justify-content:center;}
+.pk-row .pk-key{flex:0 0 calc((100% - (var(--pk-cols) - 1) * 5px) / var(--pk-cols));}
+.pk-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;direction:rtl;margin-bottom:6px;}
+.pk-key{height:40px;padding:0;border-radius:8px;background:var(--paper-deep);border:1px solid var(--line);font-family:'Amiri',serif;font-size:1.05rem;color:var(--ink);cursor:pointer;box-shadow:inset 0 1px 0 var(--btn-face-top),0 3px 0 var(--btn-face-shadow);touch-action:manipulation;}
+.pk-key:active{transform:translateY(3px);box-shadow:none;}
+.pk-key.harokat{background:var(--paper);color:var(--rubric);font-size:1.3rem;}
+.pk-controls{display:flex;gap:8px;justify-content:center;direction:ltr;}
+.pk-controls .btn-sm2{flex:1;max-width:150px;}
+.quiz-actions{display:flex;gap:10px;justify-content:center;}
+.quiz-actions .btn-primary{min-width:0;flex:1;max-width:200px;padding:11px 20px;font-size:.92rem;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 4px 0 var(--rubric-deep),0 8px 16px -6px rgba(122,97,31,.55);}
+.quiz-actions .btn-sm2{border:1px solid var(--line);background:var(--paper-deep);color:var(--ink-soft);border-radius:var(--radius-btn);padding:12px 20px;font-family:inherit;font-weight:600;cursor:pointer;font-size:.88rem;}
+.quiz-feedback{position:fixed;inset:0;z-index:98;display:flex;align-items:flex-start;justify-content:center;background:rgba(20,14,9,.5);backdrop-filter:blur(4px);padding-top:calc(var(--safe-top) + 14vh);opacity:0;pointer-events:none;transition:opacity .22s var(--ease);}
+.quiz-feedback.show{opacity:1;pointer-events:auto;}
+.quiz-feedback-card{width:calc(100% - 32px);max-width:480px;background:var(--paper);border-radius:22px;padding:26px 22px 22px;text-align:center;box-shadow:0 20px 50px -12px rgba(0,0,0,.5);transform:translateY(-14px);opacity:0;transition:transform .26s var(--ease),opacity .26s var(--ease);}
+.quiz-feedback.show .quiz-feedback-card{transform:translateY(0);opacity:1;}
+.quiz-feedback-emoji{font-size:2.4rem;margin-bottom:6px;}
+.quiz-feedback-msg{font-family:'Fraunces',serif;font-size:1.15rem;color:var(--ink-page);margin-bottom:6px;}
+.quiz-feedback-answer{font-size:.85rem;color:var(--ink-page-soft);margin-bottom:16px;}
+.quiz-feedback-answer b{font-family:'Amiri',serif;font-size:1.1rem;direction:rtl;display:inline-block;color:var(--rubric);}
+.quiz-empty{text-align:center;color:var(--ink-soft);padding:40px 20px;font-style:italic;}
+.quiz-empty p{margin:0 0 14px;}
+.quiz-empty .btn-sm2{font-style:normal;}
+
+/* ===== FX: confetti canvas, haptic-friendly micro-anim, XP/level, skeleton ===== */
+#fxCanvas{position:fixed;inset:0;z-index:99;pointer-events:none;}
+.xp-badge{display:inline-flex;align-items:center;gap:4px;margin-left:6px;font-size:.76rem;font-weight:700;color:var(--brass);white-space:nowrap;}
+.xp-badge .lvl-pill{background:linear-gradient(180deg,var(--rubric-light),var(--rubric));color:var(--paper);border-radius:100px;padding:1px 8px;font-size:.68rem;font-family:'Fraunces',serif;box-shadow:0 2px 6px -2px rgba(122,97,31,.5);}
+.xp-badge.pulse{animation:xpPulse .5s var(--ease);}
+@keyframes xpPulse{0%{transform:scale(1);}35%{transform:scale(1.22);}100%{transform:scale(1);}}
+#streakBadge.pulse{animation:flamePulse .6s var(--ease);}
+@keyframes flamePulse{0%{transform:scale(1) rotate(0);}30%{transform:scale(1.3) rotate(-6deg);}60%{transform:scale(1.1) rotate(4deg);}100%{transform:scale(1) rotate(0);}}
+.panel,.feat-btn{animation:riseIn .5s var(--ease) both;}
+.panels .panel:nth-child(1){animation-delay:.02s;}
+.panels .panel:nth-child(2){animation-delay:.08s;}
+.feat-row .feat-btn:nth-child(1){animation-delay:.10s;}
+.feat-row .feat-btn:nth-child(2){animation-delay:.14s;}
+.feat-row .feat-btn:nth-child(3){animation-delay:.18s;}
+.feat-row .feat-btn:nth-child(4){animation-delay:.22s;}
+.feat-row .feat-btn:nth-child(5){animation-delay:.26s;}
+@keyframes riseIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+@media (prefers-reduced-motion:reduce){.panel,.feat-btn{animation:none;}}
+.out.result-pop{animation:resultPop .42s var(--ease);}
+@keyframes resultPop{0%{box-shadow:0 1px 2px rgba(0,0,0,.04),0 10px 28px -14px rgba(36,26,16,.35),0 0 0 0 rgba(176,141,62,.5);}40%{box-shadow:0 1px 2px rgba(0,0,0,.04),0 10px 28px -14px rgba(36,26,16,.35),0 0 0 6px rgba(176,141,62,.28);}100%{box-shadow:0 1px 2px rgba(0,0,0,.04),0 10px 28px -14px rgba(36,26,16,.35),0 0 0 0 rgba(176,141,62,0);}}
+.shake{animation:shakeX .38s var(--ease);}
+@keyframes shakeX{10%,90%{transform:translateX(-1px);}20%,80%{transform:translateX(3px);}30%,50%,70%{transform:translateX(-7px);}40%,60%{transform:translateX(7px);}}
+.quiz-tile{animation:tilePop .22s var(--ease);}
+@keyframes tilePop{0%{transform:scale(.5);opacity:0;}70%{transform:scale(1.12);opacity:1;}100%{transform:scale(1);}}
+.quiz-tile-btn:not(.used):active{transform:translateY(4px) scale(.94);}
+.quiz-tile-btn.correct-flash{animation:tileGood .5s var(--ease);}
+@keyframes tileGood{0%{background:var(--paper-deep);}40%{background:var(--sage);}100%{background:var(--paper-deep);}}
+.skel{position:relative;overflow:hidden;background:var(--paper-deep);border-radius:var(--radius);}
+.skel::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(176,141,62,.14),transparent);transform:translateX(-100%);animation:shimmer 1.3s infinite;}
+@keyframes shimmer{100%{transform:translateX(100%);}}
+.skel-card{height:72px;margin-bottom:12px;}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--rubric-light);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:2px;}
+.btn-primary .spinner{border-color:rgba(255,255,255,.4);border-top-color:#fff;margin-right:6px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.panel.out.is-loading textarea{opacity:.45;transition:opacity .2s var(--ease);}
+.quiz-question-anim{animation:riseIn .34s var(--ease);}
+.stage-card,.hist-item,.fav-item{animation:riseIn .32s var(--ease) both;}
+.level-up-card{text-align:center;}
+.level-up-emoji{font-size:2.6rem;margin-bottom:8px;animation:xpPulse .6s var(--ease) 2;}
+.xp-fill-track{height:8px;border-radius:5px;background:var(--line);overflow:hidden;margin:10px 0 4px;}
+.xp-fill-bar{height:100%;background:linear-gradient(90deg,var(--rubric-light),var(--rubric));transition:width .6s var(--ease);}
+
+/* ===== Gerbang pembelian sekali bayar ===== */
+.purchase-gate{position:fixed;inset:0;z-index:200;background:var(--paper);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px 24px calc(32px + var(--safe-bottom));opacity:1;pointer-events:auto;transition:opacity .3s var(--ease);}
+/* GAGAL-AMAN (fail-secure): status default gerbang ini TERKUNCI. Class
+   "unlocked" HANYA ditambahkan lewat JS setelah status pembelian benar-benar
+   terverifikasi (lihat hidePurchaseGate() di app.js). Jangan diubah jadi
+   default terbuka -- sebelum app.js selesai memverifikasi pembelian, layar
+   ini harus tetap menutupi & memblokir seluruh isi aplikasi di baliknya. */
+.purchase-gate.unlocked{opacity:0;pointer-events:none;}
+.purchase-gate .brand-mark{width:64px;height:64px;font-size:2rem;margin-bottom:18px;border-radius:18px;background:linear-gradient(155deg,var(--rubric-light),var(--rubric) 65%,var(--rubric-deep));display:flex;align-items:center;justify-content:center;color:var(--paper);font-family:'Amiri',serif;font-weight:700;}
+.purchase-gate h2{font-family:'Fraunces',serif;font-size:1.4rem;color:var(--ink-page);margin:0 0 10px;}
+.purchase-gate p{color:var(--ink-page-soft);font-size:.92rem;line-height:1.6;max-width:340px;margin:0 0 22px;}
+.purchase-gate ul{text-align:left;max-width:320px;margin:0 0 26px;padding:0;list-style:none;color:var(--ink-page);font-size:.88rem;}
+.purchase-gate li{padding:6px 0 6px 26px;position:relative;}
+.purchase-gate li::before{content:'✓';position:absolute;left:0;color:var(--sage);font-weight:700;}
+.purchase-gate .btn-block{max-width:320px;}
+.purchase-gate .restore-link{margin-top:14px;font-size:.82rem;color:var(--ink-page-soft);background:none;border:none;text-decoration:underline;cursor:pointer;font-family:inherit;}
+
+/* ===== Bar pemberitahuan pembaruan kamus ===== */
+.dict-update-bar{position:fixed;top:0;left:0;right:0;z-index:60;display:flex;align-items:center;gap:10px;padding:10px 14px;padding-top:calc(10px + var(--safe-top));background:linear-gradient(180deg,var(--rubric),var(--rubric-deep));color:var(--paper);box-shadow:0 6px 20px -8px rgba(0,0,0,.4);transform:translateY(-110%);transition:transform .32s var(--ease);}
+.dict-update-bar.show{transform:translateY(0);}
+.dict-update-bar-text{flex:1;font-size:.82rem;line-height:1.35;}
+.dict-update-bar-actions{display:flex;gap:8px;flex-shrink:0;}
+.dict-update-bar-btn{border:none;border-radius:100px;padding:7px 14px;font-family:inherit;font-size:.78rem;font-weight:600;cursor:pointer;touch-action:manipulation;transition:transform .1s var(--ease);}
+.dict-update-bar-btn:active{transform:scale(.95);}
+.dict-update-bar-btn-primary{background:var(--paper);color:var(--rubric-deep);}
+.dict-update-bar-btn-ghost{background:rgba(255,255,255,.18);color:var(--paper);}
+.dict-update-bar-btn-ghost:disabled,.dict-update-bar-btn-primary:disabled{opacity:.6;pointer-events:none;}
+
+/* ===== Keyboard Arab virtual — halaman Latihan (Pegon -> Latin) ===== */
+.panel-head .pkb-actions{display:flex;gap:8px;align-items:center;}
+/* Bar tombol "Sembunyikan/Tampilkan Keyboard", sengaja diletakkan TEPAT di
+   atas keyboard (bukan di header panel yang jauh di atas) supaya gampang
+   dijangkau, dan tetap terlihat walau keyboard-nya sedang disembunyikan. */
+.pkb-toggle-bar{display:flex;justify-content:center;margin-top:12px;padding:0 6px;}
+.pkb-toggle-btn{width:100%;max-width:360px;border:none;background:color-mix(in srgb,var(--rubric-light) 22%,var(--paper-deep));color:var(--rubric-deep);font-family:inherit;font-size:.8rem;font-weight:600;letter-spacing:.02em;padding:10px 14px;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:inset 0 1px 0 var(--btn-face-top);transition:transform .12s var(--ease),background .15s var(--ease);touch-action:manipulation;}
+.pkb-toggle-btn:active{transform:scale(.97);background:color-mix(in srgb,var(--rubric-light) 32%,var(--paper-deep));}
+.pegon-kb{margin-top:10px;padding:10px 6px calc(8px + var(--safe-bottom));border-top:1px solid var(--line);display:flex;flex-direction:column;gap:6px;max-height:480px;opacity:1;overflow:hidden;transition:max-height .28s var(--ease),opacity .2s var(--ease),padding .28s var(--ease),margin .28s var(--ease);
+  /* Latar keyboard dibuat beda dari kartu putih polos di atasnya -- corak
+     krem-emas hangat senada palet aplikasi, biar area keyboard kelihatan
+     sebagai "papan tombol" tersendiri, bukan sambungan kertas kosong. */
+  background:linear-gradient(180deg,color-mix(in srgb,var(--rubric-light) 20%,var(--paper-deep)),color-mix(in srgb,var(--rubric-light) 7%,var(--paper-deep)));
+  border-radius:0 0 var(--radius) var(--radius);
+}
+.pegon-kb.pkb-collapsed{max-height:0;opacity:0;padding-top:0;padding-bottom:0;margin-top:0;border-top-color:transparent;pointer-events:none;}
+.pkb-row{display:flex;gap:4px;direction:rtl;}
+/* Baris huruf yang meniru posisi fisik keyboard Arab standar (Arabic-101)
+   HARUS ltr, bukan rtl -- karena posisi tombol fisik tidak berubah walau
+   arah tulisannya RTL (persis kayak keyboard HP/laptop sungguhan: tombol
+   Q selalu di kiri dan selalu ض, tak peduli bahasa yang diketik). Kalau
+   dipaksa rtl, urutannya malah kebalik dari standar. */
+.pkb-row.pkb-row-qwerty{direction:ltr;}
+.pkb-row.pkb-harakat{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px;scrollbar-width:none;}
+.pkb-row.pkb-harakat::-webkit-scrollbar{display:none;}
+.pkb-key{flex:1 1 0;min-width:0;height:40px;border:none;border-radius:9px;background:var(--paper-deep);color:var(--ink);font-family:'Amiri',serif;font-size:1.05rem;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 1px 0 rgba(0,0,0,.05),inset 0 1px 0 var(--btn-face-top);transition:transform .08s var(--ease),background .12s var(--ease),box-shadow .08s var(--ease);touch-action:manipulation;-webkit-user-select:none;user-select:none;}
+.pkb-key:active{transform:translateY(2px) scale(.94);background:var(--line);box-shadow:inset 0 2px 5px var(--btn-face-shadow);}
+.pkb-row.pkb-harakat .pkb-key{flex:0 0 auto;width:40px;height:36px;font-size:1.2rem;background:color-mix(in srgb,var(--rubric-light) 38%,var(--paper-deep));}
+.pkb-key.pkb-accent{background:linear-gradient(180deg,var(--rubric-light),var(--rubric));color:var(--paper);font-weight:600;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 3px 8px -4px rgba(122,97,31,.55);}
+.pkb-key.pkb-accent:active{transform:translateY(2px) scale(.94);box-shadow:inset 0 2px 5px rgba(0,0,0,.3);}
+/* Semua tombol huruf/angka/tanda baca dibuat SATU ukuran seragam, mengacu
+   ke baris terpanjang (baris huruf 1 = 12 tombol). Sebelumnya tiap baris
+   melebar penuh dibagi rata sesuai jumlah tombolnya sendiri -- jadi baris
+   yang tombolnya sedikit (baris huruf 3, Nusantara, tanda baca) tampak
+   jauh lebih besar daripada baris yang tombolnya banyak, kelihatan tidak
+   rapi. Baris harakat (strip geser) & baris bawah (spasi/hapus/enter)
+   sengaja dikecualikan karena memang didesain beda. */
+.pkb-row:not(.pkb-harakat):not(.pkb-bottom){justify-content:center;}
+.pkb-row:not(.pkb-harakat):not(.pkb-bottom) .pkb-key{flex:0 0 auto;width:calc((100% - 11 * 4px) / 12);}
+.pkb-row.pkb-bottom{gap:6px;direction:ltr;}
+.pkb-key.pkb-fn{flex:0 0 54px;font-size:1.05rem;color:var(--ink-soft);}
+.pkb-key.pkb-space{flex:1 1 auto;font-family:'Source Serif 4',serif;font-size:.78rem;letter-spacing:.1em;color:var(--ink-soft);}
+@media (prefers-reduced-motion:reduce){.pegon-kb{transition:opacity .01s linear;}}
+/* Tombol yang punya varian huruf via tekan-tahan (mis. ه -> ة, ا -> أ إ آ) */
+.pkb-key[data-variants]{position:relative;}
+.pkb-key[data-variants]::after{content:'';position:absolute;top:4px;inset-inline-end:5px;width:4px;height:4px;border-radius:50%;background:currentColor;opacity:.4;}
+.pkb-key.pkb-accent[data-variants]::after{background:var(--paper);opacity:.55;}
+/* Popup varian huruf (muncul saat tombol ditekan-tahan) */
+.pkb-popup{position:fixed;z-index:999;display:flex;gap:4px;direction:rtl;background:var(--paper-deep);border-radius:12px;padding:5px;box-shadow:0 10px 26px -8px rgba(36,26,16,.45),inset 0 1px 0 var(--btn-face-top);animation:pkbPopIn .12s var(--ease);}
+@keyframes pkbPopIn{from{opacity:0;transform:translateY(4px) scale(.92);}to{opacity:1;transform:translateY(0) scale(1);}}
+.pkb-popup-key{width:42px;height:42px;flex:0 0 auto;border:none;border-radius:9px;background:var(--paper-deep);color:var(--ink);font-family:'Amiri',serif;font-size:1.2rem;display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-user-select:none;user-select:none;touch-action:manipulation;}
+.pkb-popup-key.pkb-popup-base{background:color-mix(in srgb,var(--rubric-light) 22%,var(--paper-deep));}
+.pkb-popup-key:active{background:var(--line);}
+@media (prefers-reduced-motion:reduce){.pkb-popup{animation:none;}}
 </style>
 </head>
 <body>
-<h1>Kebijakan Privasi</h1>
-<p><strong>Kamus Pegon</strong> (com.ahmadsadam.aksarapegon)</p>
-<p>Terakhir diperbarui: Agustus 2026</p>
 
-<p>Kebijakan ini menjelaskan secara transparan data apa saja yang diproses aplikasi Kamus Pegon, bagaimana data itu digunakan, dan bagaimana cara kerja fitur alih tulisnya — agar pengguna memahami sepenuhnya sebelum menggunakan aplikasi.</p>
+<div class="dict-update-bar" id="dictUpdateBar" role="status" aria-live="polite">
+  <span class="dict-update-bar-text" id="dictUpdateBarText">Kamus baru tersedia</span>
+  <div class="dict-update-bar-actions">
+    <button class="dict-update-bar-btn dict-update-bar-btn-primary" id="dictUpdateDownloadBtn">Unduh</button>
+    <button class="dict-update-bar-btn dict-update-bar-btn-ghost" id="dictUpdateLaterBtn">Nanti</button>
+  </div>
+</div>
 
-<h2>1. Cara Kerja Fitur Alih Tulis</h2>
-<p>Teks Latin yang Anda ketik dikirim melalui koneksi internet ke server kami (Cloudflare Workers) untuk diproses menjadi aksara Pegon, lalu hasilnya dikirim kembali dan ditampilkan di aplikasi. Ini dilakukan supaya kamus dan algoritma alih tulis tidak dapat disalin dari perangkat pengguna.</p>
-<ul>
-<li>Teks yang Anda kirim <strong>tidak disimpan secara permanen</strong> di server kami. Teks hanya diproses sesaat untuk menghasilkan alih tulis, lalu dibuang.</li>
-<li>Kami <strong>tidak membaca, meninjau, atau menganalisis isi</strong> teks yang Anda kirim untuk tujuan lain di luar proses alih tulis itu sendiri.</li>
-<li>Server kami mencatat alamat IP secara sementara (maksimal 24 jam) semata-mata untuk mencegah penyalahgunaan/spam pada server (rate limiting), bukan untuk melacak identitas atau perilaku pengguna.</li>
-<li>Riwayat dan favorit alih tulis Anda disimpan <strong>secara lokal di perangkat Anda saja</strong> (localStorage), tidak pernah dikirim atau disimpan di server kami.</li>
-</ul>
+<div class="purchase-gate" id="purchaseGate">
+  <div class="brand-mark">پ</div>
+  <h2>Kamus Pegon</h2>
+  <p>Sekali beli, Tanpa iklan, Kemudahan dalam pekerjaan dan belajar tulisan pegon di genggaman anda</p>
+  <ul>
+    <li>Memudahkan pekerjaan penulisan pegon</li>
+    <li>Latihan menulis sesuka hati</li>
+    <li>Tanpa iklan</li>
+  </ul>
+  <button class="btn-block" id="purchaseBuyBtn">Beli Sekali</button>
+  <button class="restore-link" id="purchaseRestoreBtn">Sudah pernah beli? Pulihkan pembelian</button>
+</div>
 
-<h2>2. Iklan (Google AdMob)</h2>
-<p>Aplikasi ini menampilkan iklan melalui Google AdMob untuk mendukung pengembangan aplikasi secara gratis. AdMob dan mitranya dapat mengumpulkan serta memproses data berikut sesuai kebijakan Google:</p>
-<ul>
-<li>ID iklan perangkat (Advertising ID) untuk personalisasi iklan</li>
-<li>Alamat IP dan data lokasi umum (perkiraan wilayah, bukan lokasi presisi)</li>
-<li>Data teknis perangkat (jenis perangkat, versi OS, dll)</li>
-<li>Data interaksi dengan iklan (tampilan, klik)</li>
-</ul>
-<p>Kami sendiri <strong>tidak memiliki akses</strong> ke data mentah yang dikumpulkan AdMob. Pengguna dapat mengatur preferensi iklan personalisasi melalui pengaturan Google di perangkat masing-masing (Settings → Google → Ads). Selengkapnya: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Kebijakan Privasi Google</a> dan <a href="https://support.google.com/admob/answer/6128543" target="_blank" rel="noopener">Kebijakan Data AdMob</a>.</p>
+<header>
+  <div class="wrap header-inner">
+    <a class="brand" href="#">
+      <div class="brand-mark">پ</div>
+      <span class="brand-name">Kamus <em>Pegon</em></span>
+    </a>
+    <div class="header-actions">
+      <button class="icon-btn" id="themeBtn" aria-label="Mode gelap" title="Mode gelap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <button class="icon-btn" id="settingsBtn" aria-label="Pengaturan" title="Pengaturan">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+      <button class="icon-btn" id="infoBtn" aria-label="Tentang" title="Tentang">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
 
-<h2>3. Izin Aplikasi</h2>
-<p>Aplikasi hanya meminta izin akses internet, yang digunakan untuk: (a) menghubungi server alih tulis, dan (b) menampilkan iklan AdMob. Tidak ada izin sensitif lain (kamera, lokasi presisi, kontak, mikrofon, dll) yang diminta atau digunakan.</p>
+<main>
+  <div class="wrap">
+    <div class="hero">
+      <h1>Alih Tulis Latin → Pegon</h1>
+      <p><span class="online-dot" id="onlineDot"></span>Alih tulis Latin ke Pegon <span id="streakBadge" style="display:none;"></span>
 
-<h2>4. Data yang TIDAK Kami Kumpulkan</h2>
-<p>Untuk kejelasan, aplikasi ini <strong>tidak</strong> mengumpulkan: nama, email, nomor telepon, kontak, lokasi presisi (GPS), foto/media, atau data biometrik apa pun dari pengguna.</p>
+</span></p>
+    </div>
 
-<h2>5. Anak-anak</h2>
-<p>Aplikasi ini tidak ditujukan khusus untuk anak di bawah 13 tahun dan tidak dirancang untuk menarik anak-anak secara khusus. Kami tidak sengaja mengumpulkan data pribadi dari anak-anak.</p>
+    <div class="tool">
+      <div class="panels">
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Teks Latin</h3>
+            <button class="btn-sm" id="pasteBtn">Tempel</button>
+          </div>
+          <textarea id="inputLatin" placeholder="Tulis teks disini" rows="3" maxlength="2000"></textarea>
+          <div class="input-meta">
+            <p class="input-tip">💡 Tips: Gunakan keyboard berbahasa English (US), gunakan huruf ( é ) untuk kata seperti : (énak, bébék, bérés dan sejenisnya.)</p>
+            <div class="char-count"><span id="charCount">0</span>/2000</div>
+          </div>
+        </div>
+        <div class="panel out">
+          <div class="panel-head">
+            <h3>Aksara Pegon</h3>
+            <div>
+              <span class="spinner" id="translateSpinner" hidden aria-hidden="true"></span>
+              <button class="btn-sm" id="favBtn" title="Simpan favorit">★</button>
+              <button class="btn-sm" id="copyBtn">Salin</button>
+            </div>
+          </div>
+          <textarea id="outputPegon" dir="rtl" placeholder="..." readonly rows="3"></textarea>
+        </div>
+      </div>
 
-<h2>6. Keamanan Data</h2>
-<p>Seluruh komunikasi antara aplikasi dan server menggunakan koneksi terenkripsi (HTTPS). Kami menerapkan pembatasan akses (rate limiting) untuk mencegah penyalahgunaan server.</p>
+      <button type="button" class="mode-trigger" id="levelModeBtn" aria-haspopup="dialog">
+        <span class="mode-trigger-icon" aria-hidden="true">🎚️</span>
+        <span class="mode-trigger-text">
+          <small>Mode Harakat</small>
+          <strong id="levelModeLabel">Mudah</strong>
+        </span>
+        <span class="mode-trigger-chev" aria-hidden="true">›</span>
+      </button>
+      <div class="actions">
+        <button class="btn-primary" id="translateBtn">Terjemahkan</button>
+      </div>
+    </div>
+  </div>
 
-<h2>7. Perubahan Kebijakan</h2>
-<p>Kebijakan ini dapat diperbarui sewaktu-waktu. Perubahan signifikan akan diumumkan melalui pembaruan aplikasi atau catatan rilis di Play Store.</p>
+  <div class="wrap">
+    <div class="feat-row">
+      <button class="feat-btn" id="quizBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 21l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        Latihan menulis
+      </button>
+      <button class="feat-btn" id="shareBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        Bagikan
+      </button>
+      <button class="feat-btn" id="historyBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Riwayat
+      </button>
+      <button class="feat-btn" id="favListBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Favorit
+      </button>
+      <button class="feat-btn" id="clearBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        Bersihkan
+      </button>
+    </div>
 
-<h2>8. Kontak</h2>
-<p>Pertanyaan atau permintaan terkait data pribadi dapat dikirim ke: <a href="mailto:sadamkbm@gmail.com">sadamkbm@gmail.com</a></p>
+    <section class="section" id="historySection">
+      <div class="section-inner">
+        <h3>Riwayat <button class="btn-sm" id="clearHistBtn">Hapus semua</button></h3>
+        <input class="hist-search" id="histSearch" placeholder="Cari di riwayat...">
+        <div id="historyList"></div>
+      </div>
+    </section>
+
+    <section class="section" id="favSection">
+      <div class="section-inner">
+        <h3>Favorit <button class="btn-sm" id="clearFavBtn">Hapus semua</button></h3>
+        <div id="favList"></div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Kamus Pegon</p>
+    <div class="footer-links">
+      <a href="#" id="privacyLink">Privasi</a>
+      <a href="#" id="aboutLink">Tentang</a>
+      <a href="#" id="rateLink">Beri Rating</a>
+      <a href="#" id="shareAppLink">Bagikan App</a>
+    </div>
+  </div>
+</footer>
+
+<canvas id="fxCanvas"></canvas>
+<div class="toast" id="toast"></div>
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="modal-close" id="modalClose">×</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<div class="quiz-overlay" id="quizOverlay">
+  <div class="quiz-head">
+    <button class="quiz-back" id="quizBackBtn">←</button>
+    <h2 id="quizHeadTitle">Latihan menulis</h2>
+  </div>
+  <div class="quiz-body">
+    <div class="panels">
+      <div class="panel">
+        <div class="panel-head">
+          <h3>Teks Pegon</h3>
+          <div class="pkb-actions">
+            <button class="btn-sm" id="revPasteBtn">Tempel</button>
+          </div>
+        </div>
+        <textarea id="inputPegonRev" dir="rtl" placeholder="Tulis teks disini" rows="3" maxlength="2000" inputmode="none"></textarea>
+        <div class="input-meta">
+          <p class="input-tip">💡 Tips : untuk kemudahan belajar , terjemahkan di halaman latin ke pegon dahulu kemudian salin hasilnya dan tempel disini untuk membandingkan</p>
+          <div class="char-count"><span id="revCharCount">0</span>/2000</div>
+        </div>
+
+        <div class="pkb-toggle-bar">
+          <button class="pkb-toggle-btn" id="kbToggleBtn" type="button" aria-pressed="true">⌨️ Sembunyikan Keyboard</button>
+        </div>
+
+        <div class="pegon-kb" id="pegonKeyboard">
+          <div class="pkb-row pkb-harakat" aria-label="Harakat pokok">
+            <button type="button" class="pkb-key" data-insert="&#x64E;" title="Fathah">&#x25CC;&#x64E;</button>
+            <button type="button" class="pkb-key" data-insert="&#x650;" title="Kasrah">&#x25CC;&#x650;</button>
+            <button type="button" class="pkb-key" data-insert="&#x64F;" title="Dammah">&#x25CC;&#x64F;</button>
+            <button type="button" class="pkb-key" data-insert="&#x652;" title="Sukun">&#x25CC;&#x652;</button>
+            <button type="button" class="pkb-key pkb-accent" data-insert="&#x651;" title="Tasydid (syaddah) — huruf ganda">&#x25CC;&#x651;</button>
+          </div>
+          <div class="pkb-row pkb-harakat" aria-label="Tanwin &amp; madda">
+            <button type="button" class="pkb-key" data-insert="&#x64B;" title="Fathatain">&#x25CC;&#x64B;</button>
+            <button type="button" class="pkb-key" data-insert="&#x64C;" title="Dammatain">&#x25CC;&#x64C;</button>
+            <button type="button" class="pkb-key" data-insert="&#x64D;" title="Kasratain">&#x25CC;&#x64D;</button>
+            <button type="button" class="pkb-key pkb-accent" data-insert="&#x653;" title="Madda (tanda mad) — ditempel di atas huruf selain alif, mis. وٓ / نٓ">&#x25CC;&#x653;</button>
+          </div>
+          <!-- Baris angka: keyboard Arab standar defaultnya angka Arab-Indic
+               (١٢٣٤٥٦٧٨٩٠) di posisi yang sama dengan 1234567890 -- tekan
+               tahan buat angka Latin kalau sewaktu-waktu perlu. -->
+          <div class="pkb-row pkb-row-qwerty" aria-label="Angka">
+            <button type="button" class="pkb-key" data-insert="١" data-variants="1" title="Tekan tahan: 1">١</button>
+            <button type="button" class="pkb-key" data-insert="٢" data-variants="2" title="Tekan tahan: 2">٢</button>
+            <button type="button" class="pkb-key" data-insert="٣" data-variants="3" title="Tekan tahan: 3">٣</button>
+            <button type="button" class="pkb-key" data-insert="٤" data-variants="4" title="Tekan tahan: 4">٤</button>
+            <button type="button" class="pkb-key" data-insert="٥" data-variants="5" title="Tekan tahan: 5">٥</button>
+            <button type="button" class="pkb-key" data-insert="٦" data-variants="6" title="Tekan tahan: 6">٦</button>
+            <button type="button" class="pkb-key" data-insert="٧" data-variants="7" title="Tekan tahan: 7">٧</button>
+            <button type="button" class="pkb-key" data-insert="٨" data-variants="8" title="Tekan tahan: 8">٨</button>
+            <button type="button" class="pkb-key" data-insert="٩" data-variants="9" title="Tekan tahan: 9">٩</button>
+            <button type="button" class="pkb-key" data-insert="٠" data-variants="0" title="Tekan tahan: 0">٠</button>
+          </div>
+          <!-- Baris 1 & 2 mengikuti susunan standar keyboard Arab (Arabic-101 / QWERTY Arab)
+               yang dipakai HP & Windows, supaya terasa familiar buat pengguna yang sudah
+               biasa pakai keyboard Arab. Huruf yang jarang & bentuk varian (titik/hamzah)
+               dipindah ke tekan-tahan pada huruf induknya, biar tombolnya gak kebanyakan. -->
+          <div class="pkb-row pkb-row-qwerty" aria-label="Huruf baris 1 (standar Arab)">
+            <button type="button" class="pkb-key" data-insert="ض">ض</button>
+            <button type="button" class="pkb-key" data-insert="ص">ص</button>
+            <button type="button" class="pkb-key" data-insert="ث">ث</button>
+            <button type="button" class="pkb-key" data-insert="ق">ق</button>
+            <button type="button" class="pkb-key" data-insert="ف">ف</button>
+            <button type="button" class="pkb-key" data-insert="غ">غ</button>
+            <button type="button" class="pkb-key" data-insert="ع">ع</button>
+            <button type="button" class="pkb-key" data-insert="ه" data-variants="ة" title="Tekan tahan: ة (ta marbuthah)">ه</button>
+            <button type="button" class="pkb-key" data-insert="خ">خ</button>
+            <button type="button" class="pkb-key" data-insert="ح">ح</button>
+            <button type="button" class="pkb-key" data-insert="ج">ج</button>
+            <button type="button" class="pkb-key" data-insert="د" data-variants="ذ" title="Tekan tahan: ذ">د</button>
+          </div>
+          <div class="pkb-row pkb-row-qwerty" aria-label="Huruf baris 2 (standar Arab)">
+            <button type="button" class="pkb-key" data-insert="ش">ش</button>
+            <button type="button" class="pkb-key" data-insert="س">س</button>
+            <button type="button" class="pkb-key" data-insert="ي" data-variants="ئ,ى" title="Tekan tahan: ئ, ى">ي</button>
+            <button type="button" class="pkb-key" data-insert="ب">ب</button>
+            <button type="button" class="pkb-key" data-insert="ل">ل</button>
+            <button type="button" class="pkb-key" data-insert="ا" data-variants="أ,إ,آ" title="Tekan tahan: أ, إ, آ">ا</button>
+            <button type="button" class="pkb-key" data-insert="ت">ت</button>
+            <button type="button" class="pkb-key" data-insert="ن">ن</button>
+            <button type="button" class="pkb-key" data-insert="م">م</button>
+            <button type="button" class="pkb-key" data-insert="ك">ك</button>
+            <button type="button" class="pkb-key" data-insert="ط">ط</button>
+          </div>
+          <div class="pkb-row pkb-row-qwerty" aria-label="Huruf baris 3 (standar Arab)">
+            <button type="button" class="pkb-key" data-insert="ء" title="Hamzah berdiri sendiri">ء</button>
+            <button type="button" class="pkb-key" data-insert="ر">ر</button>
+            <button type="button" class="pkb-key" data-insert="و" data-variants="ؤ" title="Tekan tahan: ؤ">و</button>
+            <button type="button" class="pkb-key" data-insert="ز">ز</button>
+            <button type="button" class="pkb-key" data-insert="ظ">ظ</button>
+          </div>
+          <div class="pkb-row" aria-label="Huruf Nusantara &amp; tanda baca">
+            <button type="button" class="pkb-key" data-insert="چ" title="Ca">چ</button>
+            <button type="button" class="pkb-key" data-insert="ڤ" title="Pa / Va">ڤ</button>
+            <button type="button" class="pkb-key" data-insert="ڠ" title="Nga">ڠ</button>
+            <button type="button" class="pkb-key" data-insert="ڮ" title="Ga">ڮ</button>
+            <button type="button" class="pkb-key" data-insert="ۑ" title="Nya">ۑ</button>
+            <button type="button" class="pkb-key" data-insert="،" title="Koma">،</button>
+            <button type="button" class="pkb-key" data-insert="؛" title="Titik koma">؛</button>
+            <button type="button" class="pkb-key" data-insert="؟" title="Tanda tanya">؟</button>
+            <button type="button" class="pkb-key" data-insert="!" title="Tanda seru">!</button>
+          </div>
+          <div class="pkb-row pkb-bottom">
+            <button type="button" class="pkb-key pkb-fn" id="pkbBackspace" title="Hapus" aria-label="Hapus">⌫</button>
+            <button type="button" class="pkb-key pkb-space" id="pkbSpace">spasi</button>
+            <button type="button" class="pkb-key pkb-fn" id="pkbEnter" title="Baris baru" aria-label="Baris baru">⏎</button>
+          </div>
+        </div>
+      </div>
+      <div class="panel out">
+        <div class="panel-head">
+          <h3>Teks Latin</h3>
+          <div>
+            <button class="btn-sm" id="revFavAddBtn" title="Simpan favorit">★</button>
+            <button class="btn-sm" id="revCopyBtn">Salin</button>
+          </div>
+        </div>
+        <textarea id="outputLatinRev" placeholder="..." readonly rows="3"></textarea>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn-primary" id="revTranslateBtn">Terjemahkan</button>
+    </div>
+
+    <div class="feat-row feat-row-4">
+      <button class="feat-btn" id="revShareBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        Bagikan
+      </button>
+      <button class="feat-btn" id="revHistBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Riwayat
+      </button>
+      <button class="feat-btn" id="revFavBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Favorit
+      </button>
+      <button class="feat-btn" id="revClearBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        Bersihkan
+      </button>
+    </div>
+    <section class="section" id="revHistorySection">
+      <div class="section-inner">
+        <h3>Riwayat <button class="btn-sm" id="revClearHistBtn">Hapus semua</button></h3>
+        <div id="revHistoryList"></div>
+      </div>
+    </section>
+
+    <section class="section" id="revFavSection">
+      <div class="section-inner">
+        <h3>Favorit <button class="btn-sm" id="revClearFavBtn">Hapus semua</button></h3>
+        <div id="revFavList"></div>
+      </div>
+    </section>
+
+    <div class="actions" style="padding-top:0;">
+      <button class="btn-primary" id="revBackBtn2">← Kembali</button>
+    </div>
+  </div>
+</div>
+
+<script src="dictionary.js"></script>
+<script src="engine.js"></script>
+<script src="dict-update.js"></script>
+<script src="fx.js"></script>
+<script src="app.js"></script>
+<script src="quiz.js"></script>
+<script src="pegon-keyboard.js"></script>
 </body>
 </html>
